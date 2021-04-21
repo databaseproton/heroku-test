@@ -9,7 +9,7 @@ from flask import Response
 import json
 import io
 import os
-
+from fast import download_file
 
 
 api_id = os.environ.get('API_ID')
@@ -46,7 +46,8 @@ async def getFile(token):
             print(location, flush=True)
             print(message)
             string_out = io.BytesIO()
-            await client.download_file(location, string_out, part_size_kb=512, progress_callback=download_progress_callback)
+            ##await client.download_file(location, string_out, part_size_kb=512, progress_callback=download_progress_callback)
+            await download_file(client, message.document, string_out, progress_callback=download_progress_callback)
             string_out.seek(0)
             return send_file(
                 string_out,
