@@ -10,7 +10,10 @@ import json
 import io
 import os
 from fast import download_file
-
+from base64 import b64decode
+from nacl.secret import SecretBox
+import math
+import time
 
 api_id = os.environ.get('API_ID')
 api_hash = os.environ.get('API_HASH')
@@ -57,14 +60,29 @@ async def getFile(token):
                 )
 
 
-
+def decryptor(encrypted_string):
+    secret_key = 'LSXny9anYA3kN2x2ck68tLcVwKWCRMEZ'
+    encrypted = b64decode().decode("utf-8") 
+    encrypted = encrypted.split(':')
+    # We decode the two bits independently
+    nonce = b64decode(encrypted[0])
+    encrypted = b64decode(encrypted[1])
+    # We create a SecretBox, making sure that out secret_key is in bytes
+    box = SecretBox(bytes(secret_key, encoding='utf8'))
+    decrypted = box.decrypt(encrypted, nonce).decode('utf-8')
+    return decrypted
 
 
 @app.route("/", methods=["GET"])
 def index():
-    token = request.args.get('token')
-    return  asyncio.run(getFile(token))
-
+    group = decryptor(request.args.get('group'))
+    noteid = request.args.get('noteid')
+    expire = int(decryptor(request.args.get('expire')))
+    current_time = math.floor(int(time.time()))
+    if current_time < expire:
+        return  asyncio.run(getFile(token))
+    else:
+        return "Link Has Expired"
 
 if __name__ == '__main__':
     from waitress import serve
