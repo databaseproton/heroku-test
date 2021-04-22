@@ -34,14 +34,14 @@ def download_progress_callback(downloaded_bytes, total_bytes):
 
 
 
-async def getFile(token):
+async def getFile(group, noteid):
     client = TelegramClient(StringSession(session_name), api_id, api_hash, loop=loop)
     await client.connect()
-    channel_username = 'ECEguide'
+    channel_username = group
     message_dump = await client.get_messages(channel_username, limit=200)
     for message in message_dump:
         print(message)
-        if message.media is not None and message.id == 86264:
+        if message.media is not None and message.id == noteid:
             size = message.file.size
             offset = 0
             limit = size
@@ -76,11 +76,16 @@ def decryptor(encrypted_string):
 @app.route("/", methods=["GET"])
 def index():
     group = decryptor(request.args.get('group'))
+    print(group)
     noteid = request.args.get('noteid')
+    print(noteid)
     expire = int(decryptor(request.args.get('expire')))
+    print(expire)
     current_time = math.floor(int(time.time()))
+    print(current_time)
+    print(current_time < expire)
     if current_time < expire:
-        return  asyncio.run(getFile(token))
+        return  asyncio.run(getFile(group,noteid))
     else:
         return "Link Has Expired"
 
