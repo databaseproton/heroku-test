@@ -40,7 +40,6 @@ async def getFile(group, noteid):
     channel_username = group
     message_dump = await client.get_messages(channel_username, limit=200)
     for message in message_dump:
-        print(message)
         if message.media is not None and message.id == noteid:
             size = message.file.size
             offset = 0
@@ -77,7 +76,7 @@ def decryptor(encrypted_string):
 def index():
     group = decryptor(request.args.get('group'))
     print(group)
-    noteid = request.args.get('noteid')
+    noteid = int(request.args.get('noteid'))
     print(noteid)
     expire = int(decryptor(request.args.get('expire')))
     print(expire)
