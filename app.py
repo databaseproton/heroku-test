@@ -81,7 +81,7 @@ def index():
     print(noteid)
     expire = int(decryptor(request.args.get('expire')))
     print(expire)
-    current_time = math.floor(int(time.time()))
+    current_time = int(time.time()) * 1000
     print(current_time)
     print(current_time < expire)
     if current_time < expire:
