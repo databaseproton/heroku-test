@@ -62,7 +62,7 @@ async def getFile(token):
 
 def decryptor(encrypted_string):
     secret_key = 'LSXny9anYA3kN2x2ck68tLcVwKWCRMEZ'
-    encrypted = b64decode().decode("utf-8") 
+    encrypted = b64decode(encrypted_string).decode("utf-8") 
     encrypted = encrypted.split(':')
     # We decode the two bits independently
     nonce = b64decode(encrypted[0])
